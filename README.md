@@ -4,10 +4,10 @@ If you want simple test assertions and feel like [testify](https://pkg.go.dev/gi
 
 Highlights:
 
--   Minimal API: `Equal`, `Err`, and `True` assertions.
--   Correctly compares `time.Time` values and other types with an `Equal` method.
--   Flexible error assertions: check if an error exists, check its value, type, or any combination of these.
--   Zero hassle.
+- Minimal API: `Equal`, `Err`, and `True` assertions.
+- Correctly compares `time.Time` values and other types with an `Equal` method.
+- Flexible error assertions: check if an error exists, check its value, type, or any combination of these.
+- Zero hassle.
 
 Be is new, but it's ready for production (or maybe I should say "testing" :) I've used it in three very different projects — a CLI tool, an API server, and a database engine — and it worked great every time.
 
@@ -18,6 +18,8 @@ Install with go get:
 ```text
 go get github.com/nalgeon/be
 ```
+
+### Equality
 
 `Equal` asserts that two values are equal:
 
@@ -46,6 +48,8 @@ func Test(t *testing.T) {
     // ok
 }
 ```
+
+### Errors
 
 `Err` asserts that there is an error:
 
@@ -119,12 +123,29 @@ func Test(t *testing.T) {
 }
 ```
 
+### True/false
+
 `True` asserts that an expression is true:
 
 ```go
 func Test(t *testing.T) {
     s := "go is awesome"
     be.True(t, len(s) > 0)
+    // ok
+}
+```
+
+### Conditional checks (work in progress)
+
+Each `be` function also returns a `bool` that shows whether the assertion passed or failed. You can use this to stop early or run extra checks:
+
+```go
+func Test(t *testing.T) {
+    s := "go is awesome"
+    if be.True(t, len(s) > 0) {
+        be.Equal(t, s[0:2], "go")
+        be.Equal(t, s[len(s)-2:], "me")
+    }
     // ok
 }
 ```

@@ -29,18 +29,19 @@ type equaler[T any] interface {
 }
 
 // Equal asserts that got is equal to any of the wanted values.
-func Equal[T any](tb testing.TB, got T, wants ...T) {
+// Returns true if there is a match, false otherwise.
+func Equal[T any](tb testing.TB, got T, wants ...T) bool {
 	tb.Helper()
 
 	if len(wants) == 0 {
 		tb.Fatal("no wants given")
-		return
+		return false
 	}
 
 	// Check if got matches any of the wants.
 	for _, want := range wants {
 		if areEqual(got, want) {
-			return
+			return true
 		}
 	}
 
@@ -48,10 +49,12 @@ func Equal[T any](tb testing.TB, got T, wants ...T) {
 	if len(wants) == 1 {
 		// There is only one want, report it directly.
 		tb.Errorf("got: %#v; want: %#v", got, wants[0])
-		return
+		return false
 	}
+
 	// There are multiple wants, report a summary.
 	tb.Errorf("got: %#v; want any of: %v", got, wants)
+	return false
 }
 
 // Err asserts that the got error matches any of the wanted values.
@@ -65,7 +68,8 @@ func Equal[T any](tb testing.TB, got T, wants ...T) {
 //   - Otherwise fails the check.
 //
 // If no wants are given, checks if got is not nil.
-func Err(tb testing.TB, got error, wants ...any) {
+// Returns true if there is a match, false otherwise.
+func Err(tb testing.TB, got error, wants ...any) bool {
 	tb.Helper()
 
 	// If no wants are given, we expect got to be a non-nil error.
@@ -73,7 +77,7 @@ func Err(tb testing.TB, got error, wants ...any) {
 		if got == nil {
 			tb.Error("got: <nil>; want: error")
 		}
-		return
+		return got != nil
 	}
 
 	// Special case: there's only one want, it's nil, but got is not nil.
@@ -81,7 +85,7 @@ func Err(tb testing.TB, got error, wants ...any) {
 	if len(wants) == 1 && wants[0] == nil {
 		if got != nil {
 			tb.Fatalf("unexpected error: %v", got)
-			return
+			return false
 		}
 	}
 
@@ -90,7 +94,7 @@ func Err(tb testing.TB, got error, wants ...any) {
 	for _, want := range wants {
 		errMsg := checkErr(got, want)
 		if errMsg == "" {
-			return
+			return true
 		}
 		if message == "" {
 			message = errMsg
@@ -101,18 +105,22 @@ func Err(tb testing.TB, got error, wants ...any) {
 	if len(wants) == 1 {
 		// There is only one want, report it directly.
 		tb.Error(message)
-		return
+		return false
 	}
+
 	// There are multiple wants, report a summary.
 	tb.Errorf("got: %T(%v); want any of: %v", got, got, wants)
+	return false
 }
 
 // True asserts that got is true.
-func True(tb testing.TB, got bool) {
+// Returns true if got is true, false otherwise.
+func True(tb testing.TB, got bool) bool {
 	tb.Helper()
 	if !got {
 		tb.Error("got: false; want: true")
 	}
+	return got
 }
 
 // areEqual checks if a and b are equal.
