@@ -4,10 +4,10 @@ If you want simple test assertions and feel like [testify](https://pkg.go.dev/gi
 
 Highlights:
 
--   Minimal API: `Equal`, `Err`, and `True` assertions.
--   Correctly compares `time.Time` values and other types with an `Equal` method.
--   Flexible error assertions: check if an error exists, check its value, type, or any combination of these.
--   Zero hassle.
+- Minimal API: `Equal`, `Err`, and `True` assertions.
+- Correctly compares `time.Time` values and other types with an `Equal` method.
+- Flexible error assertions: check if an error exists, check its value, type, or any combination of these.
+- Zero hassle.
 
 Be is new, but it's ready for production (or maybe I should say "testing" :) I've used it in three very different projects — a CLI tool, an API server, and a database engine — and it worked great every time.
 
@@ -18,6 +18,8 @@ Install with go get:
 ```text
 go get github.com/nalgeon/be
 ```
+
+### Equality
 
 `Equal` asserts that two values are equal:
 
@@ -46,6 +48,8 @@ func Test(t *testing.T) {
     // ok
 }
 ```
+
+### Errors
 
 `Err` asserts that there is an error:
 
@@ -118,6 +122,8 @@ func Test(t *testing.T) {
     // ok
 }
 ```
+
+### True/false
 
 `True` asserts that an expression is true:
 
